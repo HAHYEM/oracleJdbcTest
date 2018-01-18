@@ -9,9 +9,9 @@ public class MemberApp {
 	
 	public static void main(String[] args) {
 		
-		
+	MemberVo vo = new MemberVo();
 		// 김상명 추가
-		MemberVo vo = new MemberVo();
+		
 		vo.setEmail( "kim@bit.ac.kr" );
 		vo.setName( "김비트" );
 		vo.setGender( "남" );
@@ -21,7 +21,6 @@ public class MemberApp {
 		
 		// 현재 멤버 리스트 출력
 		printAllMemebrList();
-
 		
 		
 		
@@ -36,9 +35,8 @@ public class MemberApp {
 		// 현재 멤버 리스트 출력
 		printAllMemebrList();
 		
-		
-		
-		
+
+
 		// 이상명 비밀번호 변경(이메일 주소 찾아서 비밀번호만 변경되어야함)
 		vo.setEmail( "lee@bit.ac.kr" );
 		vo.setName( "" );
@@ -49,9 +47,7 @@ public class MemberApp {
 		// 현재 멤버 리스트 출력
 		printAllMemebrList();
 		
-		
-		
-		
+
 		// 김상명 삭제
 		dao.deleteMember( "kim@bit.ac.kr" );
 		// 현재 멤버 리스트 출력
@@ -64,7 +60,10 @@ public class MemberApp {
 		System.out.println( "***** 현재  멤버 리스트 *****" );
 
 		//출력코드작성
-		
+		for(MemberVo vo : dao.getListAll()) {
+			System.out.println(vo.getId()  + " | " + vo.getName() + " | " + vo.getEmail()  + " | " +  vo.getPassword()  + " | " + vo.getGender());
+		}
+		System.out.println();
 	}
 	
 

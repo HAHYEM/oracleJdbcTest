@@ -1,14 +1,51 @@
 /*
-1)	í‰ê·  ì—°ë´‰(salary)ì´ ê°€ì¥ ë†’ì€ ë‚˜ë¼ëŠ”?
+1)	Æò±Õ ¿¬ºÀ(salary)ÀÌ °¡Àå ³ôÀº ³ª¶ó´Â?
  */
-
+SELECT C.country_name "³ª¶óÀÌ¸§", avg(salary) "Æò±Õ¿¬ºÀ"
+FROM employees E, departments D, locations L, countries C
+WHERE E.department_id = D.department_id
+      AND D.location_id = L.location_id
+      AND L.country_id = C.country_id
+      AND (C.country_id, E.salary) in (SELECT country_id, salary
+                                       FROM (SELECT C.country_id, avg(salary) ct_avg
+                                             FROM employees E, departments D, locations L, countries C 
+                                             WHERE E.department_id = D.department_id
+                                                   AND D.location_id = L.location_id
+                                                   AND L.country_id = C.country_id
+                                             GROUP BY C.country_id) A , 
+                                            (SELECT max(ct_avg) max_ct_avg
+                                             FROM (SELECT C.country_id, avg(salary) ct_avg
+                                                   FROM employees E, departments D, locations L, countries C 
+                                                   WHERE E.department_id = D.department_id
+                                                         AND D.location_id = L.location_id
+                                                         AND L.country_id = C.country_id
+                                                   GROUP BY C.country_id)) B
+                                             WHERE A.ct_avg = B.max_ct_avg)
+GROUP BY country_name;
 
 /*
-2)	í‰ê·  ì—°ë´‰(salary)ì´ ê°€ì¥ ë†’ì€ ì§€ì—­ì€?
+2)	Æò±Õ ¿¬ºÀ(salary)ÀÌ °¡Àå ³ôÀº Áö¿ªÀº?
 */
 
+SELECT region_name "Áö¿ªÀÌ¸§", round(lo_avg,1) "Æò±Õ¿¬ºÀ"
+FROM ( SELECT  R.region_name, avg(E.salary) lo_avg
+        FROM employees E, departments D, locations L, countries C, regions R
+        WHERE E.department_id = D.department_id 
+              AND D.location_id = L.location_id
+              AND L.country_id = C.country_id
+              AND C.region_id = R.region_id
+        GROUP BY R.region_name
+ORDER BY lo_avg DESC )
+WHERE ROWNUM <= 1;
 
 /*
-3)	ê°€ì¥ ë§ì€ ì§ì›ì´ ìˆëŠ” ë¶€ì„œëŠ” ì–´ë–¤ ë¶€ì„œì¸ê°€ìš”?
+3)	°¡Àå ¸¹Àº Á÷¿øÀÌ ÀÖ´Â ºÎ¼­´Â ¾î¶² ºÎ¼­ÀÎ°¡¿ä?
 */
 
+SELECT department_name ºÎ¼­ÀÌ¸§, co Á÷¿ø¼ö
+FROM (  SELECT  D.department_name , count(E.employee_id) co
+        FROM employees E, departments D
+        WHERE E.department_id = D.department_id 
+        GROUP BY D.department_name 
+        ORDER BY co DESC )        
+WHERE ROWNUM <= 1;

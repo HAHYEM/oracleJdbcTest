@@ -1,13 +1,28 @@
 /*
-1) EMPLOYEE í…Œì´ë¸”ì—ì„œ ì´ë¦„(Last Name)ì— â€œhaeâ€ë¥¼ í¬í•¨í•˜ê³  ìˆëŠ” ì‚¬ì›ë“¤ê³¼ ê°™ì€ ë¶€ì„œì—ì„œ ê·¼ë¬´í•˜ê³  ìˆëŠ” ì‚¬ì›ì˜ 
-EMPLOYEE_ID, FIRST_NAME, LAST_NAME, DEPARTMENT_ID ë¥¼ ì¶œë ¥í•˜ë¼. 
+1) EMPLOYEE Å×ÀÌºí¿¡¼­ ÀÌ¸§(Last Name)¿¡ ¡°hae¡±¸¦ Æ÷ÇÔÇÏ°í ÀÖ´Â »ç¿øµé°ú °°Àº ºÎ¼­¿¡¼­ ±Ù¹«ÇÏ°í ÀÖ´Â »ç¿øÀÇ 
+EMPLOYEE_ID, FIRST_NAME, LAST_NAME, DEPARTMENT_ID ¸¦ Ãâ·ÂÇÏ¶ó. 
 */
 
-
+SELECT employee_id, first_name, last_name, department_id
+FROM employees
+WHERE department_id in (SELECT department_id
+                        FROM employees
+                        WHERE last_name like '%hae%'
+                        GROUP BY department_id)
+ORDER BY employee_id desc;
 
 /*
-2) ê° ë„ì‹œ(city)ë³„ ê°€ì¥ ì—°ë´‰ì„ ë§ì´ ë°›ê³  ìˆëŠ” ì‚¬ì›ì˜ ë„ì‹œ ì´ë¦„(City), First Name, Last Name, ê¸‰ì—¬ë¥¼ ì¡°íšŒí•˜ë¼. 
-ê¸‰ì—¬ ìˆœìœ¼ë¡œ ì˜¤ë¦„ì°¨ìˆœ ì •ë ¬í•˜ì‹œì˜¤. (1-2.sql)
+2) °¢ µµ½Ã(city)º° °¡Àå ¿¬ºÀÀ» ¸¹ÀÌ ¹Ş°í ÀÖ´Â »ç¿øÀÇ µµ½Ã ÀÌ¸§(City), First Name, Last Name, ±Ş¿©¸¦ Á¶È¸ÇÏ¶ó. 
+±Ş¿© ¼øÀ¸·Î ¿À¸§Â÷¼ø Á¤·ÄÇÏ½Ã¿À. (1-2.sql)
 */  
 
-
+SELECT L.city, E.first_name, E.last_name, E.salary
+FROM  employees E, departments D, locations L
+WHERE E.department_id = D.department_id
+      AND D.location_id = L.location_id
+      AND (city, salary) in (SELECT L.city, max(salary)
+                             FROM employees E, departments D, locations L 
+                             WHERE E.department_id = D.department_id
+                                   AND D.location_id = L.location_id 
+                             GROUP BY city)
+ORDER BY salary asc;
