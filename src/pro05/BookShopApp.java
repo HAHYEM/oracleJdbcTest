@@ -63,7 +63,7 @@ public class BookShopApp {
 		 * 
 		 */
 
-		dao.rent(num);
+		dao.rent(num);	//BookShopDao 에 rent 메소드를 만듦.
 
 		displayBookInfo();
 	}
@@ -73,8 +73,13 @@ public class BookShopApp {
 		System.out.println("*****도서 정보 출력하기******");
 		System.out.println();
 		for (BookVo vo : list) {
-			System.out.println("책제목:	" + vo.getTitle() + ",	작가:	" + vo.getAuthorName() + ",	대여유무:	" + vo.getStateCode());
 			
+			System.out.println("책제목: " + vo.getTitle() + ",	작가:" + vo.getAuthorName() + ",	대여유무:" + vo.getStateCode());
+			if(vo.getStateCode() == 0) {
+				System.out.println("재고 있음");
+			}else {
+				System.out.println("재고 없음");
+			}
 		}
 	}
 }
