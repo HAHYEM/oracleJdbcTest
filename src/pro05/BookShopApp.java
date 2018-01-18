@@ -13,7 +13,7 @@ public class BookShopApp {
 		vo.setTitle("트와일라잇");
 		vo.setAuthorName("스테파니메이어");
 		dao.insert(vo);
-/*
+
 		vo.setTitle("뉴문");
 		vo.setAuthorName("스테파니메이어");
 		dao.insert(vo);
@@ -52,7 +52,7 @@ public class BookShopApp {
 
 		vo.setTitle("풀하우스");
 		vo.setAuthorName("원수연");
-		dao.insert(vo);*/
+		dao.insert(vo);
 
 		Scanner key = new Scanner(System.in);
 		System.out.print("대여 하고 싶은 책의 번호를 입력하세요.:");
@@ -73,8 +73,8 @@ public class BookShopApp {
 		System.out.println("*****도서 정보 출력하기******");
 		System.out.println();
 		for (BookVo vo : list) {
-			System.out.println(vo);
+			System.out.println("책제목:	" + vo.getTitle() + ",	작가:	" + vo.getAuthorName() + ",	대여유무:	" + vo.getStateCode());
+			
 		}
-
 	}
 }
