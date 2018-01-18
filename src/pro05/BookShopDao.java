@@ -1,254 +1,3 @@
-//package pro05;
-//
-//import java.sql.*;
-//import java.util.*;
-//
-//public class BookShopDao {
-//	// BookShopDao ¸¦ ÀÛ¼ºÇÕ´Ï´Ù.
-//
-//	public void insert(BookVo vo) {
-//		// 0. import java.sql.*; ctrl + shift + o
-//		Connection conn = null;
-//		PreparedStatement pstmt = null; // Äõ¸®¹® °ü·Ã
-//
-//		try {
-//			// 1. JDBC µå¶óÀÌ¹ö (Oracle) ·Îµù
-//			Class.forName("oracle.jdbc.driver.OracleDriver");
-//
-//			// 2. Connection ¾ò¾î¿À±â
-//			String url = "jdbc:oracle:thin:@localhost:1521:xe";
-//			conn = DriverManager.getConnection(url, "webdb", "webdb");
-//
-//			// Áß¿ä 3. SQL¹® ÁØºñ / ¹ÙÀÎµù / ½ÇÇà
-//			String query = "INSERT INTO bookshop VALUES(seq_bookshop_id.nextval, ?, ?, ?, ?)";
-//			pstmt = conn.prepareStatement(query);
-//
-//			pstmt.setString(1, vo.getTitle());
-//			pstmt.setString(2, vo.getPubs());
-//			pstmt.setString(3, vo.getPubDate());
-//			pstmt.setString(4, vo.getAuthorName());
-//			pstmt.setInt(5, vo.getStateCode());
-//
-//			int count = pstmt.executeUpdate();
-//
-//			// Áß¿ä 4.°á°úÃ³¸®
-//			System.out.println(count + "°Ç ÀúÀå¿Ï·á");
-//		} catch (ClassNotFoundException e) {
-//			System.out.println("error: µå¶óÀÌ¹ö ·Îµù ½ÇÆĞ - " + e);
-//		} catch (SQLException e) {
-//			System.out.println("error:" + e);
-//		} finally {
-//
-//			// 5. ÀÚ¿øÁ¤¸®
-//			try {
-//				if (pstmt != null) {
-//					pstmt.close();
-//				}
-//				if (conn != null) {
-//					conn.close();
-//				}
-//			} catch (SQLException e) {
-//				System.out.println("error:" + e);
-//			}
-//		}
-//	}
-//
-//	public BookVo selectBook(int BookId) {
-//
-//		// 0. import java.sql.*;
-//		Connection conn = null;
-//		PreparedStatement pstmt = null;
-//		ResultSet rs = null;
-//		BookVo vo = new BookVo();
-//
-//		try {
-//			// 1. JDBC µå¶óÀÌ¹ö (Oracle) ·Îµù
-//
-//			Class.forName("oracle.jdbc.driver.OracleDriver");
-//
-//			// 2. Connection ¾ò¾î¿À±â
-//			String url = "jdbc:oracle:thin:@localhost:1521:xe";
-//			conn = DriverManager.getConnection(url, "webdb", "webdb");
-//
-//			// 3. SQL¹® ÁØºñ / ¹ÙÀÎµù / ½ÇÇà
-//
-//			String query = " SELECT id, title, pubs, pub_date, author_name, state_code " 
-//							+ " FROM bookshop "
-//							+ " WHERE id = ? ";
-//			pstmt = conn.prepareStatement(query);
-//			pstmt.setInt(1, BookId);
-//
-//			rs = pstmt.executeQuery();
-//
-//			if (rs.next()) {
-//				int id = rs.getInt("id");
-//				String title = rs.getString("title");
-//				String pubs = rs.getString("pubs");
-//				String pubDate = rs.getString("pub_date");
-//				String authorName = rs.getString("author_name");
-//				int stateCode = rs.getInt("state_code");
-//
-//				vo.setId(id);
-//				vo.setTitle(title);
-//				vo.setPubs(pubs);
-//				vo.setPubDate(pubDate);
-//				vo.setAuthorName(authorName);
-//				vo.setStateCode(stateCode);
-//
-//			} else {
-//				vo = null;
-//			}
-//
-//		} catch (ClassNotFoundException e) {
-//			System.out.println("error: µå¶óÀÌ¹ö ·Îµù ½ÇÆĞ - " + e);
-//		} catch (SQLException e) {
-//			System.out.println("error:" + e);
-//		} finally {
-//
-//			// 5. ÀÚ¿øÁ¤¸®
-//			try {
-//				if (rs != null) {
-//					rs.close();
-//				}
-//				if (pstmt != null) {
-//					pstmt.close();
-//				}
-//				if (conn != null) {
-//					conn.close();
-//				}
-//			} catch (SQLException e) {
-//				System.out.println("error:" + e);
-//			}
-//
-//		}
-//
-//		return vo;
-//	}
-//
-//	public static List<BookVo> getListAll() {
-//		// 0. import java.sql.*;
-//		Connection conn = null;
-//		PreparedStatement pstmt = null;
-//		ResultSet rs = null;
-//
-//		List<BookVo> bookshopList = new ArrayList<BookVo>();
-//
-//		try {
-//			// 1. JDBC µå¶óÀÌ¹ö (Oracle) ·Îµù
-//			Class.forName("oracle.jdbc.driver.OracleDriver");
-//
-//			// 2. Connection ¾ò¾î¿À±â
-//			String url = "jdbc:oracle:thin:@localhost:1521:xe";
-//			conn = DriverManager.getConnection(url, "webdb", "webdb");
-//
-//			// 3. SQL¹® ÁØºñ / ¹ÙÀÎµù / ½ÇÇà
-//			String query = "SELECT id, title, pubs, pub_date, author_name, state_code FROM bookshop";
-//			pstmt = conn.prepareStatement(query);
-//			rs = pstmt.executeQuery(); // ³¯¸®´Â°Å
-//
-//			// 4.°á°úÃ³¸®
-//			while (rs.next()) {
-//				BookVo vo = new BookVo();
-//
-//				int id = rs.getInt("id");
-//				String title = rs.getString("title");
-//				String pubs = rs.getString("pubs");
-//				String pubDate = rs.getString("pub_date");
-//				String authorName = rs.getString("author_name");
-//				int stateCode = rs.getInt("state_code");
-//
-//				vo.setId(id);
-//				vo.setTitle(title);
-//				vo.setPubs(pubs);
-//				vo.setPubDate(pubDate);
-//				vo.setAuthorName(authorName);
-//				vo.setStateCode(stateCode);
-//
-//				bookshopList.add(vo);
-//			}
-//		} catch (ClassNotFoundException e) {
-//			System.out.println("error: µå¶óÀÌ¹ö ·Îµù ½ÇÆĞ - " + e);
-//		} catch (SQLException e) {
-//			System.out.println("error:" + e);
-//		} finally {
-//			// 5. ÀÚ¿øÁ¤¸®
-//			try {
-//				if (rs != null) {
-//					rs.close();
-//				}
-//				if (pstmt != null) {
-//					pstmt.close();
-//				}
-//				if (conn != null) {
-//					conn.close();
-//				}
-//			} catch (SQLException e) {
-//				System.out.println("error:" + e);
-//			}
-//		}
-//		return bookshopList;
-//	}
-//
-//	public void rent(int id) {
-//		// 0. import java.sql.*;
-//		Connection conn = null;
-//
-//		// Äõ¸® °ü·ÃµÈ Å¬·¡½º
-//		PreparedStatement pstmt = null;
-//
-//		try {
-//			// 1. JDBC µå¶óÀÌ¹ö (Oracle) ·Îµù
-//			Class.forName("oracle.jdbc.driver.OracleDriver");
-//
-//			// 2. Connection ¾ò¾î¿À±â
-//			String url = "jdbc:oracle:thin:@localhost:1521:xe";
-//			conn = DriverManager.getConnection(url, "webdb", "webdb");
-//
-//			// 3. SQL¹® ÁØºñ / ¹ÙÀÎµù / ½ÇÇà
-//
-//			String query = "UPDATE bookshop SET state_code = ? WHERE id = ?";
-//
-//			pstmt = conn.prepareStatement(query);
-//			BookVo lsb = selectBook(id);
-//
-//			int state = 0;
-//			
-//			if (lsb.getStateCode() == 1) {
-//				state = 0;
-//			} else if (lsb.getStateCode() == 0) {
-//				state = 1;
-//			}
-//
-//			pstmt.setInt(1, state);
-//			pstmt.setInt(2, id);
-//
-//			int count = pstmt.executeUpdate();
-//
-//			System.out.println(lsb.getTitle() + "ÀÌ(°¡) ´ë¿© µÆ½À´Ï´Ù.");
-//
-//		} catch (ClassNotFoundException e) {
-//			System.out.println("error: µå¶óÀÌ¹ö ·Îµù ½ÇÆĞ - " + e);
-//		} catch (SQLException e) {
-//			System.out.println("error:" + e);
-//		} finally {
-//
-//			// 5. ÀÚ¿øÁ¤¸®
-//			try {
-//				if (pstmt != null) {
-//					pstmt.close();
-//				}
-//				if (conn != null) {
-//					conn.close();
-//				}
-//			} catch (SQLException e) {
-//				System.out.println("error:" + e);
-//			}
-//
-//		}
-//
-//	}
-//
-//}
 package pro05;
 
 import java.sql.*;
@@ -263,18 +12,18 @@ public class BookShopDao {
 		// 0. import java.sql.*;
 		Connection conn = null;
 
-		// Äõ¸® °ü·ÃµÈ Å¬·¡½º
+		// ì¿¼ë¦¬ ê´€ë ¨ëœ í´ë˜ìŠ¤
 		PreparedStatement pstmt = null;
 
 		try {
-			// 1. JDBC µå¶óÀÌ¹ö (Oracle) ·Îµù
+			// 1. JDBC ë“œë¼ì´ë²„ (Oracle) ë¡œë”©
 			Class.forName("oracle.jdbc.driver.OracleDriver");
 
-			// 2. Connection ¾ò¾î¿À±â
+			// 2. Connection ì–»ì–´ì˜¤ê¸°
 			String url = "jdbc:oracle:thin:@localhost:1521:xe";
 			conn = DriverManager.getConnection(url, "webdb", "webdb");
 
-			// 3. SQL¹® ÁØºñ / ¹ÙÀÎµù / ½ÇÇà
+			// 3. SQLë¬¸ ì¤€ë¹„ / ë°”ì¸ë”© / ì‹¤í–‰
 
 			String query = "INSERT INTO bookshop VALUES (seq_bookshop_id.nextval,?,?,?,?,?)";
 
@@ -283,17 +32,17 @@ public class BookShopDao {
 			pstmt.setString(2, vo.getPubs());
 			pstmt.setString(3, vo.getPubDate());
 			pstmt.setString(4, vo.getAuthorName());
-			pstmt.setInt(5, vo.getStateCode());	//int·Î ¹Ù²Ş.
+			pstmt.setInt(5, vo.getStateCode());	//intë¡œ ë°”ê¿ˆ.
 
 			int count = pstmt.executeUpdate();
 
 		} catch (ClassNotFoundException e) {
-			System.out.println("error: µå¶óÀÌ¹ö ·Îµù ½ÇÆĞ - " + e);
+			System.out.println("error: ë“œë¼ì´ë²„ ë¡œë”© ì‹¤íŒ¨ - " + e);
 		} catch (SQLException e) {
 			System.out.println("error:" + e);
 		} finally {
 
-			// 5. ÀÚ¿øÁ¤¸®
+			// 5. ìì›ì •ë¦¬
 			try {
 				if (pstmt != null) {
 					pstmt.close();
@@ -317,15 +66,15 @@ public class BookShopDao {
 		BookVo vo = new BookVo();
 
 		try {
-			// 1. JDBC µå¶óÀÌ¹ö (Oracle) ·Îµù
+			// 1. JDBC ë“œë¼ì´ë²„ (Oracle) ë¡œë”©
 
 			Class.forName("oracle.jdbc.driver.OracleDriver");
 
-			// 2. Connection ¾ò¾î¿À±â
+			// 2. Connection ì–»ì–´ì˜¤ê¸°
 			String url = "jdbc:oracle:thin:@localhost:1521:xe";
 			conn = DriverManager.getConnection(url, "webdb", "webdb");
 
-			// 3. SQL¹® ÁØºñ / ¹ÙÀÎµù / ½ÇÇà
+			// 3. SQLë¬¸ ì¤€ë¹„ / ë°”ì¸ë”© / ì‹¤í–‰
 
 			String query = " SELECT id, title, pubs, pub_date, author_name, state_code " + " FROM bookshop "
 					+ " WHERE id = ? ";
@@ -353,12 +102,12 @@ public class BookShopDao {
 			}
 
 		} catch (ClassNotFoundException e) {
-			System.out.println("error: µå¶óÀÌ¹ö ·Îµù ½ÇÆĞ - " + e);
+			System.out.println("error: ë“œë¼ì´ë²„ ë¡œë”© ì‹¤íŒ¨ - " + e);
 		} catch (SQLException e) {
 			System.out.println("error:" + e);
 		} finally {
 
-			// 5. ÀÚ¿øÁ¤¸®
+			// 5. ìì›ì •ë¦¬
 			try {
 				if (rs != null) {
 					rs.close();
@@ -385,14 +134,14 @@ public class BookShopDao {
 		List<BookVo> bookList = new ArrayList<BookVo>();
 
 		try {
-			// 1. JDBC µå¶óÀÌ¹ö (Oracle) ·Îµù
+			// 1. JDBC ë“œë¼ì´ë²„ (Oracle) ë¡œë”©
 			Class.forName("oracle.jdbc.driver.OracleDriver");
 
-			// 2. Connection ¾ò¾î¿À±â
+			// 2. Connection ì–»ì–´ì˜¤ê¸°
 			String url = "jdbc:oracle:thin:@localhost:1521:xe";
 			conn = DriverManager.getConnection(url, "webdb", "webdb");
 
-			// 3. SQL¹® ÁØºñ / ¹ÙÀÎµù / ½ÇÇà
+			// 3. SQLë¬¸ ì¤€ë¹„ / ë°”ì¸ë”© / ì‹¤í–‰
 			String query = " SELECT id, title, pubs, pub_date, author_name, state_code " + " FROM bookshop ";
 			pstmt = conn.prepareStatement(query);
 
@@ -417,12 +166,12 @@ public class BookShopDao {
 			}
 
 		} catch (ClassNotFoundException e) {
-			System.out.println("error: µå¶óÀÌ¹ö ·Îµù ½ÇÆĞ - " + e);
+			System.out.println("error: ë“œë¼ì´ë²„ ë¡œë”© ì‹¤íŒ¨ - " + e);
 		} catch (SQLException e) {
 			System.out.println("error:" + e);
 		} finally {
 
-			// 5. ÀÚ¿øÁ¤¸®
+			// 5. ìì›ì •ë¦¬
 			try {
 				if (rs != null) {
 					rs.close();
@@ -448,19 +197,19 @@ public class BookShopDao {
 		// 0. import java.sql.*;
 		Connection conn = null;
 
-		// Äõ¸® °ü·ÃµÈ Å¬·¡½º
+		// ì¿¼ë¦¬ ê´€ë ¨ëœ í´ë˜ìŠ¤
 		PreparedStatement pstmt = null;
 
 
 		try {
-			// 1. JDBC µå¶óÀÌ¹ö (Oracle) ·Îµù
+			// 1. JDBC ë“œë¼ì´ë²„ (Oracle) ë¡œë”©
 			Class.forName("oracle.jdbc.driver.OracleDriver");
 
-			// 2. Connection ¾ò¾î¿À±â
+			// 2. Connection ì–»ì–´ì˜¤ê¸°
 			String url = "jdbc:oracle:thin:@localhost:1521:xe";
 			conn = DriverManager.getConnection(url, "webdb", "webdb");
 
-			// 3. SQL¹® ÁØºñ / ¹ÙÀÎµù / ½ÇÇà
+			// 3. SQLë¬¸ ì¤€ë¹„ / ë°”ì¸ë”© / ì‹¤í–‰
 
 			String query = "UPDATE bookshop SET state_code = ? WHERE id = ?";
 
@@ -479,15 +228,15 @@ public class BookShopDao {
 
 			int count = pstmt.executeUpdate();
 			
-			System.out.println(brrowBook.getTitle() + "ÀÌ(°¡) ´ë¿© µÆ½À´Ï´Ù.");
+			System.out.println(brrowBook.getTitle() + "ì´(ê°€) ëŒ€ì—¬ ëìŠµë‹ˆë‹¤.");
 
 		} catch (ClassNotFoundException e) {
-			System.out.println("error: µå¶óÀÌ¹ö ·Îµù ½ÇÆĞ - " + e);
+			System.out.println("error: ë“œë¼ì´ë²„ ë¡œë”© ì‹¤íŒ¨ - " + e);
 		} catch (SQLException e) {
 			System.out.println("error:" + e);
 		} finally {
 
-			// 5. ÀÚ¿øÁ¤¸®
+			// 5. ìì›ì •ë¦¬
 			try {
 				if (pstmt != null) {
 					pstmt.close();
